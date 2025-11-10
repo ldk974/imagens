@@ -57,3 +57,44 @@ Se você não concorda: **não execute** o script.
 3. Leia o aviso e confirme.  
 4. Escolha a imagem na lista (os arquivos aparecem numerados).  
 5. Confirme a operação. O arquivo será baixado e substituirá o arquivo em:
+
+%AppData%\Microsoft\Windows\Themes\TrancodedWallpaper
+
+## Perguntas frequentes (FAQ)
+
+**P:** O script envia dados para fora do meu computador?  
+**R:** Não. Por padrão não há telemetria. O script apenas baixa imagens públicas do GitHub.
+
+**P:** Posso desfazer a alteração?  
+**R:** Sim — basta restaurar o arquivo anterior na pasta `...Themes` ou usar uma imagem alternativa e reiniciar. Recomenda-se manter backup prévio se necessário.
+
+**P:** O GitHub pode bloquear downloads?  
+**R:** Se ocorrer rate-limit, o script tenta reexecutar com *backoff* exponencial e detecta respostas HTML/429 para evitar substituições inválidas. Se o problema persistir, considere baixar o asset manualmente.
+
+**P:** Posso usar este script em máquinas de trabalho?  
+**R:** Não — não execute este script em máquinas que você não possui ou gerencia sem permissão explícita.
+
+---
+
+## Privacidade & responsabilidade
+
+Você é o único responsável pelo uso deste script e pelo conteúdo aplicado. Não incentive o uso em equipamentos de terceiros, ambientes corporativos ou públicos. Ao usar este software você declara estar ciente dos riscos e concorda em assumir a responsabilidade.
+
+---
+
+## Notas sobre Releases & organização de imagens
+
+- Para adicionar novas imagens ao catálogo, faça upload dos `.jpg` como **Assets** em um novo *Release* (ex: `v2`, `v3`).  
+- Nomeie as imagens de forma sequencial (`1.jpg`, `2.jpg`, ...) para manter a ordenação contínua no menu do script.
+
+---
+
+## Licença
+
+Uso pessoal e não comercial. Não ofereço garantias; use por sua conta e risco.
+
+---
+
+## Contato / Contribuições
+
+Problemas, dúvidas ou sugestões → abra uma **Issue** no repositório.
