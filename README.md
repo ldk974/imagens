@@ -1,7 +1,7 @@
-# WallpaperSync — Troca automatizada de wallpapers (conteúdo adulto) 🔒🖼️
+# WallpaperSync — Troca automatizada de wallpapers 🔒🖼️
 
-**WallpaperSync** é um utilitário em PowerShell que lista imagens hospedadas nos *Releases* deste repositório e aplica uma imagem selecionada como papel de parede do Windows.  
-Feito para quem quer trocar rapidamente wallpapers pessoais sem criar vestígios desnecessários — com consentimento explícito e total controle do usuário.
+**WallpaperSync** é uma ferramenta em PowerShell que lista imagens hospedadas nos *Releases* deste repositório e aplica uma imagem selecionada como papel de parede do Windows.  
+Feito para quem quer trocar rapidamente wallpapers pessoais sem criar vestígios desnecessários.
 
 ---
 
@@ -9,8 +9,7 @@ Feito para quem quer trocar rapidamente wallpapers pessoais sem criar vestígios
 
 - **Rápido** — lista e baixa a imagem escolhida em poucos segundos.  
 - **Discreto** — operações locais, sem criar logs persistentes por padrão.  
-- **Profissional** — mensagens claras, confirmações e proteções contra erros (rate-limit, downloads inválidos).  
-- **Direto** — não tenta disfarçar o propósito: foi feito para aplicar wallpapers pessoais, incluindo conteúdo adulto. Use com responsabilidade.
+- **Profissional** — mensagens claras, confirmações e proteções contra erros (rate-limit, downloads inválidos).
 
 ---
 
@@ -20,7 +19,7 @@ Feito para quem quer trocar rapidamente wallpapers pessoais sem criar vestígios
 - Ordenação contínua por nomes numéricos (ex.: `1.jpg`, `2.jpg`, ...).
 - Mostra contador público de downloads (dados do GitHub).
 - Download resiliente com retries e verificação básica de integridade.
-- Substitui o arquivo de tema do Windows em `%AppData%\Microsoft\Windows\Themes\TrancodedWallpaper` (sem extensão).
+- Substitui o arquivo de tema do Windows em `%AppData%\Microsoft\Windows\Themes\TranscodedWallpaper` (sem extensão).
 - Confirmações explícitas antes de qualquer alteração e antes de reiniciar/desligar.
 - Fecha automaticamente ao terminar.
 
@@ -29,8 +28,7 @@ Feito para quem quer trocar rapidamente wallpapers pessoais sem criar vestígios
 ## ⚠️ Aviso importante — leia antes de usar
 
 - **Este script altera arquivos do sistema** (pasta de temas do Windows).  
-- **As imagens podem conter conteúdo adulto / NSFW.**  
-- **Não** rode este script em computadores que você não possui ou sem autorização explícita (trabalho, máquina compartilhada, equipamento de terceiros).  
+- **As imagens contem conteúdo adulto / NSFW.**
 - O wallpaper só será efetivamente aplicado após **reiniciar** o sistema. O script oferece a opção de reiniciar automaticamente com confirmação.
 
 Se você não concorda: **não execute** o script.
@@ -58,7 +56,7 @@ Se você não concorda: **não execute** o script.
 4. Escolha a imagem na lista (os arquivos aparecem numerados).  
 5. Confirme a operação. O arquivo será baixado e substituirá o arquivo em:
 
-%AppData%\Microsoft\Windows\Themes\TrancodedWallpaper
+%AppData%\Microsoft\Windows\Themes\TranscodedWallpaper
 
 ## Perguntas frequentes (FAQ)
 
@@ -71,21 +69,11 @@ Se você não concorda: **não execute** o script.
 **P:** O GitHub pode bloquear downloads?  
 **R:** Se ocorrer rate-limit, o script tenta reexecutar com *backoff* exponencial e detecta respostas HTML/429 para evitar substituições inválidas. Se o problema persistir, considere baixar o asset manualmente.
 
-**P:** Posso usar este script em máquinas de trabalho?  
-**R:** Não — não execute este script em máquinas que você não possui ou gerencia sem permissão explícita.
-
 ---
 
 ## Privacidade & responsabilidade
 
 Você é o único responsável pelo uso deste script e pelo conteúdo aplicado. Não incentive o uso em equipamentos de terceiros, ambientes corporativos ou públicos. Ao usar este software você declara estar ciente dos riscos e concorda em assumir a responsabilidade.
-
----
-
-## Notas sobre Releases & organização de imagens
-
-- Para adicionar novas imagens ao catálogo, faça upload dos `.jpg` como **Assets** em um novo *Release* (ex: `v2`, `v3`).  
-- Nomeie as imagens de forma sequencial (`1.jpg`, `2.jpg`, ...) para manter a ordenação contínua no menu do script.
 
 ---
 
