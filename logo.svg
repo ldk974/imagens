@@ -1,0 +1,38 @@
+<!--?xml version="1.0" encoding="utf-8"?-->
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="WallpaperSync logo">
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#7289DA"></stop>
+      <stop offset="1" stop-color="#5B78FF"></stop>
+    </linearGradient>
+    <filter id="f1" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000" flood-opacity="0.45"></feDropShadow>
+    </filter>
+  </defs>
+
+  <!-- background circle -->
+  <rect width="240" height="240" rx="28" ry="28" fill="#1E1F22"></rect>
+
+  <!-- terminal panel -->
+  <g transform="translate(30,36)" filter="url(#f1)">
+    <rect width="180" height="168" rx="12" fill="#2F3136"></rect>
+    <!-- top lights -->
+    <circle cx="18" cy="18" r="6" fill="#E1477E"></circle>
+    <circle cx="36" cy="18" r="6" fill="#F6C85F"></circle>
+    <circle cx="54" cy="18" r="6" fill="#9CE78C"></circle>
+    <!-- prompt and W -->
+    <g transform="translate(22,46)">
+      <!-- prompt: >_ -->
+      <text x="-5" y="0" font-family="JetBrains Mono, Consolas, monospace" font-size="24" fill="#9DB0FF" transform="translate(0,16)">➜</text>
+      <text x="25" y="0" font-family="JetBrains Mono, Consolas, monospace" font-size="24" fill="#E6E6E6" transform="translate(0,16)"> wallpaper</text>
+      <text x="25" y="33" font-family="JetBrains Mono, Consolas, monospace" font-size="24" fill="#E6E6E6" transform="translate(0,16)"> sync</text>
+      <text x="75" y="31" font-family="JetBrains Mono, Consolas, monospace" font-size="24" fill="#E6E6E6" transform="translate(0,16)"> ┃
+        <animate attributeName="opacity"
+             values="1;0"
+             dur="1.2s"
+             repeatCount="indefinite"
+             calcMode="discrete"/>
+	</text>
+	</g>
+	</g>
+</svg>
