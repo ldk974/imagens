@@ -30,9 +30,8 @@ Feito para quem quer trocar rapidamente wallpapers pessoais sem criar vestígios
 
 ## Recursos
 
-- Agrega automaticamente **todos** os assets `.jpg` presentes nos *Releases* do repositório.
+- Agrega automaticamente **todas** as imagens presentes no [pixeldrain](https://pixeldrain.com/l/uoHYZ942) **ou** utiliza-se uma imagem customizada fornecida pelo usuário.
 - Ordenação contínua por nomes numéricos (ex.: `1.jpg`, `2.jpg`, ...).
-- Mostra contador público de downloads (dados do GitHub).
 - Download resiliente com retries e verificação básica de integridade.
 - Substitui o arquivo do papel de parede do Windows.
 - Confirmações explícitas antes de qualquer alteração e antes de reiniciar/desligar.
@@ -44,7 +43,7 @@ Feito para quem quer trocar rapidamente wallpapers pessoais sem criar vestígios
 
 - **Este script altera arquivos do sistema**.  
 - **As imagens disponibilizadas contém conteúdo adulto / NSFW.**
-- O wallpaper só será efetivamente aplicado após **reiniciar** o sistema. O script oferece a opção de reiniciar automaticamente com confirmação.
+- O wallpaper só será efetivamente aplicado após **reiniciar** Explorador de Arquivos. O script oferece a opção de reiniciar automaticamente com confirmação.
 
 Se você não concorda: **não execute** o script.
 
@@ -80,8 +79,8 @@ Se você não concorda: **não execute** o script.
 **P:** Posso desfazer a alteração?  
 **R:** Sim — basta restaurar o arquivo anterior na pasta `...Themes` ou usar uma imagem alternativa e reiniciar. É recomendado manter backup prévio caso necessário.
 
-**P:** O GitHub pode bloquear downloads?  
-**R:** Se ocorrer rate-limit, o script tenta reexecutar com *backoff* exponencial e detecta respostas HTML/429 para evitar substituições inválidas. Se o problema persistir, considere baixar o asset manualmente.
+**P:** Posso utilizar uma imagem minha?  
+**R:** Sim — caso prefira, o script permite a utilização de uma imagem própria, apenas cole a URL da imagem após selecionar a opção no menu.
 
 ---
 
