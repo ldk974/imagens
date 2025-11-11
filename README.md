@@ -9,10 +9,8 @@
 <p align="center">
   <a href="#recursos">Recursos</a> •
   <a href="#como-utilizar">Como Utilizar</a> •
-  <a href="#download">Download</a> •
-  <a href="#credits">Credits</a> •
-  <a href="#perguntas-frequentes-(faq)">FAQ</a> •
-  <a href="#licença0">Licença</a>
+  <a href="#perguntas-frequentes-faq">FAQ</a> •
+  <a href="#licença">Licença</a>
 </p>
 
 **WallpaperSync** é uma ferramenta em PowerShell que lista imagens hospedadas nos *Releases* deste repositório e aplica uma imagem selecionada como papel de parede do Windows.  
@@ -36,7 +34,7 @@ Feito para quem quer trocar rapidamente wallpapers pessoais sem criar vestígios
 - Ordenação contínua por nomes numéricos (ex.: `1.jpg`, `2.jpg`, ...).
 - Mostra contador público de downloads (dados do GitHub).
 - Download resiliente com retries e verificação básica de integridade.
-- Substitui o arquivo de tema do Windows em `%AppData%\Microsoft\Windows\Themes\TranscodedWallpaper` (sem extensão).
+- Substitui o arquivo do papel de parede do Windows.
 - Confirmações explícitas antes de qualquer alteração e antes de reiniciar/desligar.
 - Fecha automaticamente ao terminar.
 
@@ -44,8 +42,8 @@ Feito para quem quer trocar rapidamente wallpapers pessoais sem criar vestígios
 
 ## ⚠️ Aviso importante — leia antes de usar
 
-- **Este script altera arquivos do sistema** (pasta de temas do Windows).  
-- **As imagens contem conteúdo adulto / NSFW.**
+- **Este script altera arquivos do sistema**.  
+- **As imagens disponibilizadas contém conteúdo adulto / NSFW.**
 - O wallpaper só será efetivamente aplicado após **reiniciar** o sistema. O script oferece a opção de reiniciar automaticamente com confirmação.
 
 Se você não concorda: **não execute** o script.
@@ -55,8 +53,7 @@ Se você não concorda: **não execute** o script.
 ## Requisitos
 
 - Windows 10/11 (PowerShell 5.1 recomendado)  
-- Acesso à internet (para listar e baixar assets do GitHub)  
-- Salve o script com **UTF-8 with BOM** (para acentuação correta) — o README traz instruções
+- Acesso à internet (para listar e baixar assets do GitHub)
 
 > Se necessário, você pode permitir execução temporária com:
 > ```powershell
@@ -65,23 +62,23 @@ Se você não concorda: **não execute** o script.
 
 ---
 
-## Como executar
+## Como utilizar
 
-1. Faça o download do `baixar_imagem_releases_final.ps1` na página de **Releases**.  
+1. Faça o download do `wallpapersync.ps1` na página de **Releases**.  
 2. Clique com o botão direito → **Executar com PowerShell**.  
-3. Leia o aviso e confirme.  
-4. Escolha a imagem na lista (os arquivos aparecem numerados).  
-5. Confirme a operação. O arquivo será baixado e substituirá o arquivo em:
-
-%AppData%\Microsoft\Windows\Themes\TranscodedWallpaper
+3. Leia o aviso e confirme.
+4. Siga as instruções exibidas no terminal.  
 
 ## Perguntas frequentes (FAQ)
 
 **P:** O script envia dados para fora do meu computador?  
-**R:** Não. Por padrão não há telemetria. O script apenas baixa imagens públicas do GitHub.
+**R:** Não. Não há telemetria. O script apenas baixa imagens públicas do GitHub.
+
+**P:** O script deixa algum rastro?
+**R:** Se essa é sua preocupação, então não. O script baixa as imagens de forma temporária e as apaga após realizar o processo.
 
 **P:** Posso desfazer a alteração?  
-**R:** Sim — basta restaurar o arquivo anterior na pasta `...Themes` ou usar uma imagem alternativa e reiniciar. Recomenda-se manter backup prévio se necessário.
+**R:** Sim — basta restaurar o arquivo anterior na pasta `...Themes` ou usar uma imagem alternativa e reiniciar. É recomendado manter backup prévio caso necessário.
 
 **P:** O GitHub pode bloquear downloads?  
 **R:** Se ocorrer rate-limit, o script tenta reexecutar com *backoff* exponencial e detecta respostas HTML/429 para evitar substituições inválidas. Se o problema persistir, considere baixar o asset manualmente.
@@ -102,4 +99,4 @@ Uso pessoal e não comercial. Não ofereço garantias; use por sua conta e risco
 
 ## Contato / Contribuições
 
-Problemas, dúvidas ou sugestões → abra uma **Issue** no repositório.
+Problemas, dúvidas ou sugestões → abra um **Issue** no repositório.
