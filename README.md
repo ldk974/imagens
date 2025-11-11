@@ -3,6 +3,9 @@
 **WallpaperSync** é uma ferramenta em PowerShell que lista imagens hospedadas nos *Releases* deste repositório e aplica uma imagem selecionada como papel de parede do Windows.  
 Feito para quem quer trocar rapidamente wallpapers pessoais sem criar vestígios desnecessários.
 
+<!-- BEGIN LATEST DOWNLOAD BUTTON -->
+<!-- END LATEST DOWNLOAD BUTTON -->
+
 ---
 
 ## Principais pontos (na lata)
