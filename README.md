@@ -1,4 +1,11 @@
-# WallpaperSync — Troca automatizada de wallpapers 🔒🖼️
+<p align="center">
+  <img src="assets/logo.svg" alt="WallpaperSync logo" width="240"/>
+</p>
+
+<p align="center">
+  Troca automatizada de papéis de parede
+</p>
+
 
 **WallpaperSync** é uma ferramenta em PowerShell que lista imagens hospedadas nos *Releases* deste repositório e aplica uma imagem selecionada como papel de parede do Windows.  
 Feito para quem quer trocar rapidamente wallpapers pessoais sem criar vestígios desnecessários.
@@ -7,7 +14,7 @@ Feito para quem quer trocar rapidamente wallpapers pessoais sem criar vestígios
 
 ---
 
-## Principais pontos (na lata)
+## Principais pontos
 
 - **Rápido** — lista e baixa a imagem escolhida em poucos segundos.  
 - **Discreto** — operações locais, sem criar logs persistentes por padrão.  
