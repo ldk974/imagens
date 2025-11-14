@@ -1,4 +1,4 @@
-﻿namespace WallpaperSyncTest2  // <-- ajuste se necessário
+﻿namespace WallpaperSync
 {
     partial class PreviewForm
     {

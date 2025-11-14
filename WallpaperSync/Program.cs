@@ -1,4 +1,4 @@
-namespace WallpaperSyncTest2
+namespace WallpaperSync 
 {
     internal static class Program
     {

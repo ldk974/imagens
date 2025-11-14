@@ -1,4 +1,4 @@
-﻿namespace WallpaperSyncTest2
+﻿namespace WallpaperSync
 {
     partial class MainForm
     {
@@ -107,7 +107,7 @@
             Controls.Add(this.listWallpapers);
             Font = new Font("Segoe UI", 9F);
             Name = "MainForm";
-            Text = "NSFW Wallpaper Selector";
+            Text = "WallpaperSync";
             ResumeLayout(false);
             PerformLayout();
         }

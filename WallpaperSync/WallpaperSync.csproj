@@ -6,6 +6,14 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <PackageIcon></PackageIcon>
+    <Product>$(AssemblyName)</Product>
+    <ApplicationIcon>logo.ico</ApplicationIcon>
+    <AssemblyName>$(AssemblyName)</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="logo.ico" />
+  </ItemGroup>
 
 </Project>
