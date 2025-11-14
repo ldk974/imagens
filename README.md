@@ -13,7 +13,7 @@
   <a href="#licença">Licença</a>
 </p>
 
-**WallpaperSync** é uma ferramenta em PowerShell que lista imagens hospedadas em um servidor (ou uma imagem fornecida pelo usuário) e aplica a imagem selecionada como papel de parede do Windows.  
+**WallpaperSync** é uma ferramenta que lista imagens hospedadas em um servidor (ou uma imagem fornecida pelo usuário) e aplica a imagem selecionada como papel de parede do Windows.  
 Ideal para quem quer trocar rapidamente papéis de parede sem criar vestígios desnecessários.
 
 ---
@@ -28,19 +28,20 @@ Ideal para quem quer trocar rapidamente papéis de parede sem criar vestígios d
 
 ## Recursos
 
-- Agrega automaticamente **todas** as imagens presentes no servidor **ou** utiliza-se uma imagem customizada fornecida pelo usuário.
+- Agregação automática de **todas** as imagens presentes no servidor.
+- Suporte a imagem customizada fornecida pelo usuário.
 - Ordenação contínua por nomes numéricos (ex.: `1.jpg`, `2.jpg`, ...).
 - Download resiliente com retries e verificação básica de integridade.
-- Substitui o arquivo do papel de parede do Windows.
-- Confirmações explícitas antes de qualquer alteração e antes de reiniciar/desligar.
+- Substituição direta do arquivo do papel de parede do Windows com fallback.
+- Confirmações antes de qualquer alteração e antes de reiniciar/desligar.
 
 ---
 
 ## ⚠️ Aviso importante — leia antes de usar
 
-- **Este programa pode alterar arquivos do sistema de forma direta**.  
-- **As imagens disponibilizadas contém conteúdo adulto / NSFW.**
-- O wallpaper possivelmente só será efetivamente aplicado após **reiniciar** o Explorador de Arquivos. O programa oferece a opção de reiniciar automaticamente com confirmação.
+- Este programa **pode alterar arquivos do sistema de forma direta**.  
+- As imagens disponibilizadas contém **conteúdo adulto / NSFW.**
+- O wallpaper possivelmente só será efetivamente aplicado após **reiniciar o Explorador de Arquivos**. O programa oferece essaa opção automaticamente com confirmação.
 
 Se você não concorda: **não execute** o programa.
 
@@ -48,7 +49,8 @@ Se você não concorda: **não execute** o programa.
 
 ## Requisitos
 
-- Windows 10/11 (PowerShell 5.1 recomendado)  
+- Windows 10/11
+- PowerShell 5.1 recomendado (para a versão Script Powershell)
 - Acesso à internet (para listar e baixar assets do GitHub)
 
 > Se necessário, você pode permitir execução temporária do script com:
@@ -58,8 +60,6 @@ Se você não concorda: **não execute** o programa.
 
 ---
 ## Comparação entre versões
-
-## Comparação de funcionalidades
 
 | Feature / Recurso                     | Script PowerShell | App GUI (EXE) |
 |---------------------------------------|:-----------------:|:-------------:|
@@ -72,52 +72,57 @@ Se você não concorda: **não execute** o programa.
 | Categorias                            | ❌                | 🔜 (em breve) |
 
 ---
-##Downloads
+## Downloads
 
-**GUI - Windows App**
-[Download V1.0.0 (Gui)](https://release-assets.githubusercontent.com/github-production-release-asset/1081555498/525b72e2-7507-4580-9d63-0744e86e00a9?sp=r&sv=2018-11-09&sr=b&spr=https&se=2025-11-14T19%3A13%3A28Z&rscd=attachment%3B+filename%3DWallpaperSync.exe&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2025-11-14T18%3A12%3A34Z&ske=2025-11-14T19%3A13%3A28Z&sks=b&skv=2018-11-09&sig=lptXLV%2B3rOkEfhw%2FcKbvAmNO07mOyXbBl37XJCWCUuY%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc2MzE0ODE5NCwibmJmIjoxNzYzMTQ0NTk0LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.WmJs39WO30HPhKgRPxvYPbbLy2J4rlTfiLQgGJcFmss&response-content-disposition=attachment%3B%20filename%3DWallpaperSync.exe&response-content-type=application%2Foctet-stream)
+### **GUI - Windows App**
+**[Download V1.0.0 (Gui)](https://release-assets.githubusercontent.com/github-production-release-asset/1081555498/525b72e2-7507-4580-9d63-0744e86e00a9?sp=r&sv=2018-11-09&sr=b&spr=https&se=2025-11-14T19%3A13%3A28Z&rscd=attachment%3B+filename%3DWallpaperSync.exe&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2025-11-14T18%3A12%3A34Z&ske=2025-11-14T19%3A13%3A28Z&sks=b&skv=2018-11-09&sig=lptXLV%2B3rOkEfhw%2FcKbvAmNO07mOyXbBl37XJCWCUuY%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc2MzE0ODE5NCwibmJmIjoxNzYzMTQ0NTk0LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.WmJs39WO30HPhKgRPxvYPbbLy2J4rlTfiLQgGJcFmss&response-content-disposition=attachment%3B%20filename%3DWallpaperSync.exe&response-content-type=application%2Foctet-stream)**
 
-**Script Powershell**
-[Download V1.0.0]
+### **Script Powershell**
+Em Breve
 
----
-## Como utilizar a versão Script Powershell
+<details open>
+<summary>Como utilizar a versão Script Powershell</summary>
 
 1. Faça o download do `wallpapersync.ps1` na página de **Releases**.  
 2. Clique com o botão direito → **Executar com PowerShell**.  
 3. Leia o aviso e confirme.
-4. Siga as instruções exibidas no terminal.  
+4. Siga as instruções exibidas no terminal.
+
+</details>
 
 ---
 
 ## Perguntas frequentes (FAQ)
 
 **P:** WallpaperSync envia dados para fora do meu computador?  
-**R:** Não. Não há telemetria. Tanto o script quanto a versão GUI apenas baixam imagens do servidor.
+**R:** Não. Não há telemetria.  As versões GUI e Script Powershell apenas baixam imagens do servidor.
 
-**P:** WallpaperSync deixa algum rastro?
-**R:** Se essa é sua preocupação, então não. Ele baixa as imagens de forma temporária e as apaga após realizar o processo.
+**P:** O WallpaperSync deixa algum rastro?
+**R:** As imagens são baixadas de forma temporária e removidas após realizar o processo.
 
 **P:** Posso desfazer a alteração?  
-**R:** Sim — tanto o script quanto GUI possuem opções de restaurar o papel de parede originais
+**R:** Sim — tanto o script quanto a GUI possuem opções de restaurar o papel de parede original.
 
 **P:** Posso utilizar uma imagem minha?  
-**R:** Sim — caso prefira, o WallpaperSync permitem a utilização de uma imagem própria.
+**R:** Sim — é possível fornecer uma imagem própria em ambas as versões.
 
 ---
 
 ## Privacidade & responsabilidade
 
-Você é o único responsável pelo uso deste script e pelo conteúdo aplicado. Não incentive o uso em equipamentos de terceiros, ambientes corporativos ou públicos. Ao usar este software você declara estar ciente dos riscos e concorda em assumir a responsabilidade.
+Você é o único responsável pelo uso deste software e pelo conteúdo aplicado.  
+Não utilize em equipamentos de terceiros ou ambientes corporativos sem autorização.  
+Ao usar o WallpaperSync, você declara estar ciente dos riscos e concorda em assumir a responsabilidade.
 
 ---
 
 ## Licença
 
-Uso pessoal e não comercial. Não ofereço garantias; use por sua conta e risco.
+Uso pessoal e não comercial. 
+Nenhuma garantia é fornecida - use por sua conta e risco.
 
 ---
 
 ## Contato / Contribuições
 
-Problemas, dúvidas ou sugestões → abra um **Issue** no repositório.
+Problemas, dúvidas ou sugestões → abra um **Issue** neste repositório.
