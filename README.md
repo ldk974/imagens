@@ -42,7 +42,7 @@ Ideal para quem quer trocar rapidamente papéis de parede sem criar vestígios d
 
 - Este programa **pode alterar arquivos do sistema de forma direta**.  
 - As imagens disponibilizadas contém **conteúdo adulto / NSFW.**
-- O wallpaper possivelmente só será efetivamente aplicado após **reiniciar o Explorador de Arquivos**. O programa oferece essa opção automaticamente com confirmação.
+- O papel de parede possivelmente só será efetivamente aplicado após **reiniciar o Explorador de Arquivos**. O programa oferece essa opção automaticamente com confirmação.
 
 Se você não concorda: **não execute** o programa.
 
@@ -64,8 +64,8 @@ Se você não concorda: **não execute** o programa.
 
 | Feature / Recurso                     | Script PowerShell | App GUI (EXE) |
 |---------------------------------------|:-----------------:|:-------------:|
-| Aplicar wallpaper                     | ✔️                | ✔️            |
-| Listagem de wallpapers                | ✔️                | ✔️            |
+| Aplicar papel de parede               | ✔️                | ✔️            |
+| Listagem de papeis de paredes         | ✔️                | ✔️            |
 | Prévias                               | ❌                | ✔️            |
 | Fallback automático (TranscodedWallpaper) | ✔️            | ✔️            |
 | Interface gráfica                     | ❌                | ✔️            |
