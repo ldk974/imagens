@@ -119,8 +119,8 @@ Ao usar o WallpaperSync, você declara estar ciente dos riscos e concorda em ass
 
 ## Licença
 
-Uso pessoal e não comercial. 
-Nenhuma garantia é fornecida - use por sua conta e risco.
+Este projeto é distribuído sob a licença GPL-3.0.  
+Consulte o arquivo LICENSE para detalhes.
 
 ---
 
