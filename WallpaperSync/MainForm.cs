@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.DirectoryServices;
 using System.Drawing;
 using System.IO;
@@ -17,11 +18,10 @@ namespace WallpaperSync
     public partial class MainForm : Form
     {
         private readonly List<ImageEntry> Images = new();
-        private readonly string appdata = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "WallpaperSync");
+        private readonly string appdata = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "WallpaperSyncGUI");
         private readonly string cacheDir;
         private readonly string backupDir;
         private string lastAppliedPath = null; // caminho pra fazer o backup do wallpaper original lá
-
         private readonly HttpClient http;
         private readonly string transcodedPath;
 
@@ -50,9 +50,18 @@ namespace WallpaperSync
             chkShowPreviews.Checked = false;
 
             Load += MainForm_Load;
+            FormClosing += MainForm_FormClosing;
 
             DebugLogger.Log("MainForm inicializada. Diretórios criados.");
 
+        }
+
+        private string HashSha256(string input)
+        {
+            using var sha = System.Security.Cryptography.SHA256.Create();
+            var bytes = System.Text.Encoding.UTF8.GetBytes(input);
+            var hash = sha.ComputeHash(bytes);
+            return BitConverter.ToString(hash).Replace("-", "").Substring(0, 20);
         }
 
         private static List<string> ParseHtmlLinks(string html)
@@ -78,58 +87,19 @@ namespace WallpaperSync
             }
         }
 
-
-        // gera URL da pasta de wallpapers (ex: {baseUrl}wallpapers/sfw/)
-        private string BuildWallpapersUrl(string baseUrl, string folder)
+        private string MatchThumb(string fileServerName, HashSet<string> thumbFiles)
         {
-            if (string.IsNullOrEmpty(baseUrl)) return null;
-            if (!baseUrl.EndsWith("/")) baseUrl += "/";
-            return $"{baseUrl}wallpapers/{folder}/";
-        }
+            // 1) thumbnail idêntica
+            if (thumbFiles.Contains(fileServerName))
+                return fileServerName;
 
-        // gera URL da thumbnail padrão (ex: {baseUrl}thumbs/sfw/arquivo.jpg)
-        private string BuildThumbUrl(string baseUrl, string folder, string fileName)
-        {
-            if (string.IsNullOrEmpty(baseUrl)) return null;
-            if (!baseUrl.EndsWith("/")) baseUrl += "/";
-            return $"{baseUrl}thumbs/{folder}/{fileName}";
-        }
+            // 2) arquivo_thumb.ext
+            string name = Path.GetFileNameWithoutExtension(fileServerName);
+            string ext = Path.GetExtension(fileServerName);
+            string alt = $"{name}_thumb{ext}";
 
-        // tenta variações de nome da thumbnail (sem sufixo e com sufixo _thumb)
-        // retorna a URL encontrada (ou null se nenhuma das variações existir)
-        private async Task<string> TryThumbVariantsAsync(string thumbBaseUrl, string fileName)
-        {
-            if (string.IsNullOrWhiteSpace(thumbBaseUrl)) return null;
-
-            try
-            {
-                // tenta URL exatamente como veio
-                DebugLogger.Log($"Verificando existência da thumbnail: {thumbBaseUrl}");
-                using var resp = await http.GetAsync(thumbBaseUrl);
-                if (resp.IsSuccessStatusCode) return thumbBaseUrl;
-            }
-            catch (Exception ex)
-            {
-                DebugLogger.Log($"Erro verificando thumbnail padrão: {ex.Message}");
-            }
-
-            // tenta com sufixo _thumb antes da extensão
-            try
-            {
-                string nameOnly = Path.GetFileNameWithoutExtension(fileName);
-                string ext = Path.GetExtension(fileName);
-                string altName = $"{nameOnly}_thumb{ext}";
-                string altUrl = thumbBaseUrl.EndsWith(fileName) ? thumbBaseUrl.Substring(0, thumbBaseUrl.Length - fileName.Length) + altName
-                                                                 : thumbBaseUrl.Replace(fileName, altName);
-
-                DebugLogger.Log($"Tentando variante de thumbnail: {altUrl}");
-                using var resp2 = await http.GetAsync(altUrl);
-                if (resp2.IsSuccessStatusCode) return altUrl;
-            }
-            catch (Exception ex)
-            {
-                DebugLogger.Log($"Erro verificando variante de thumbnail: {ex.Message}");
-            }
+            if (thumbFiles.Contains(alt))
+                return alt;
 
             return null;
         }
@@ -153,14 +123,12 @@ namespace WallpaperSync
             lblStatus.Text = $"Catálogo carregado ({Images.Count} imagens)";
             DebugLogger.Log($"Imagens carregadas: {Images.Count}");
         }
-
         private void ToggleControls(bool enabled)
         {
             chkShowPreviews.Enabled = enabled;
             btnRefresh.Enabled = enabled;
             btnUndo.Enabled = enabled;
         }
-
         private async Task LoadImages()
         {
             DebugLogger.Log("Iniciando LoadImages()");
@@ -170,11 +138,10 @@ namespace WallpaperSync
                 Images.Clear();
                 listWallpapers.Items.Clear();
 
-                // baixa o arquivo que contém a base URL
+                // Lê URL base do repositório
                 const string urlTxt = "https://raw.githubusercontent.com/ldk974/WallpaperSync/refs/heads/master/current_urls.txt";
-                DebugLogger.Log($"Baixando arquivo de URLs: {urlTxt}");
-
                 string rawContent;
+
                 try
                 {
                     rawContent = await http.GetStringAsync(urlTxt);
@@ -187,7 +154,8 @@ namespace WallpaperSync
 
                 string baseUrl = rawContent
                     .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                    .FirstOrDefault()?.Trim();
+                    .FirstOrDefault()
+                    ?.Trim();
 
                 if (string.IsNullOrEmpty(baseUrl))
                 {
@@ -199,64 +167,64 @@ namespace WallpaperSync
 
                 DebugLogger.Log($"BaseURL detectada: {baseUrl}");
 
-                // categorias fixas
-                string[] folders = new[] { "sfw", "nsfw" };
-                var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                string[] categories = new[] { "sfw", "nsfw" };
 
-                var client = http; // usa o HttpClient já existente na classe
-
-                foreach (string folder in folders)
+                foreach (string folder in categories)
                 {
-                    string url = $"{baseUrl}wallpapers/{folder}/";
-                    DebugLogger.Log($"Lendo pasta: {url}");
+                    string urlWall = $"{baseUrl}wallpapers/{folder}/";
+                    string urlThumb = $"{baseUrl}thumbs/{folder}/";
 
-                    string html;
-                    try
+                    DebugLogger.Log($"Lendo wallpapers: {urlWall}");
+                    DebugLogger.Log($"Lendo thumbnails: {urlThumb}");
+
+                    string htmlWall = "";
+                    string htmlThumb = "";
+
+                    try { htmlWall = await http.GetStringAsync(urlWall); }
+                    catch (Exception ex) { DebugLogger.Log($"Erro lendo {urlWall}: {ex.Message}"); continue; }
+
+                    try { htmlThumb = await http.GetStringAsync(urlThumb); }
+                    catch (Exception ex) { DebugLogger.Log($"Erro lendo {urlThumb}: {ex.Message}"); }
+
+                    var wallpaperFiles = ParseHtmlLinks(htmlWall);
+                    var thumbFiles = new HashSet<string>(ParseHtmlLinks(htmlThumb), StringComparer.OrdinalIgnoreCase);
+
+                    foreach (string fileServerName in wallpaperFiles)
                     {
-                        html = await client.GetStringAsync(url);
-                    }
-                    catch (Exception ex)
-                    {
-                        DebugLogger.Log($"Falha ao ler pasta {url}: {ex.Message}");
-                        continue;
-                    }
+                        string decoded = Uri.UnescapeDataString(fileServerName);
 
-                    var links = ParseHtmlLinks(html);
+                        string originalUrl = $"{urlWall}{fileServerName}";
 
-                    foreach (var fileRaw in links)
-                    {
-                        string urlFull = $"{url}{fileRaw}";
-                        if (!seen.Add(urlFull)) continue;
+                        // matching determinístico
+                        string thumbMatch = MatchThumb(fileServerName, thumbFiles);
 
-                        string file = Uri.UnescapeDataString(fileRaw);
-                        string name = Path.GetFileNameWithoutExtension(file);
-                        string ext = Path.GetExtension(file).ToLowerInvariant();
+                        string thumbUrl = thumbMatch != null
+                            ? $"{urlThumb}{thumbMatch}"
+                            : null;
 
-                        string tag = name.Contains("[SFW]", StringComparison.OrdinalIgnoreCase) ? "SFW" :
-                                     name.Contains("[NSFW]", StringComparison.OrdinalIgnoreCase) ? "NSFW" :
-                                     folder.ToUpper();
-
-                        string thumbCandidate = BuildThumbUrl(baseUrl, folder, fileRaw);
+                        // identidade única
+                        string fileId = HashSha256(originalUrl.ToLowerInvariant());
 
                         Images.Add(new ImageEntry
                         {
-                            Url = urlFull,
-                            ThumbnailUrl = thumbCandidate,
-                            Name = name,
-                            Tag = tag,
-                            OriginalExtension = ext
+                            FileServerName = fileServerName,
+                            FileDecodedName = decoded,
+                            Name = decoded,
+                            OriginalUrl = originalUrl,
+                            ThumbnailUrl = thumbUrl,
+                            Category = folder,
+                            FileId = fileId
                         });
                     }
                 }
 
-                DebugLogger.Log($"LoadImages() finalizado. Total de itens: {Images.Count}");
+                DebugLogger.Log($"LoadImages finalizado: {Images.Count} itens");
             }
             catch (Exception ex)
             {
                 DebugLogger.Log($"LoadImages() falhou: {ex}");
             }
         }
-
 
 
         private async Task PopulateGridAsync()
@@ -287,7 +255,6 @@ namespace WallpaperSync
 
             flpGrid.ResumeLayout();
         }
-
         private Panel CreateThumbnailCardPlaceholder(ImageEntry entry)
         {
             var panel = new Panel
@@ -365,202 +332,97 @@ namespace WallpaperSync
             return panel;
         }
 
-
-        private string GetSafeFileNameFromUrl(ImageEntry entry)
+        private async Task<string> DownloadOriginal(ImageEntry entry)
         {
-            if (entry == null)
-                return Guid.NewGuid().ToString("N") + ".jpg";
+            var dir = Path.Combine(cacheDir, "originals");
+            Directory.CreateDirectory(dir);
 
-            string ext = entry.OriginalExtension;
-            if (string.IsNullOrWhiteSpace(ext))
-                ext = ".jpg";
-
-            // usa a URL completa (ou ThumbnailUrl) para gerar hash
-            string raw = (entry.ThumbnailUrl ?? entry.Url) ?? Guid.NewGuid().ToString("N");
-
-            string hash;
-            using (var sha = System.Security.Cryptography.SHA256.Create())
-            {
-                var bytes = System.Text.Encoding.UTF8.GetBytes(raw.ToLowerInvariant());
-                hash = BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-", "").Substring(0, 20);
-            }
-
-            string namePart = entry.Name;
-            foreach (char c in Path.GetInvalidFileNameChars())
-                namePart = namePart.Replace(c, '_');
-
-            if (string.IsNullOrWhiteSpace(namePart))
-                namePart = "img_" + hash;
-
-            return $"{namePart}_{hash}{ext}";
-        }
-
-
-
-        private async Task<string> DownloadToCache(ImageEntry entry)
-        {
-            var originalsDir = Path.Combine(cacheDir, "originals");
-            Directory.CreateDirectory(originalsDir);
-
-            string safeName = GetSafeFileNameFromUrl(entry);
-            string ext = Path.GetExtension(safeName);
+            string ext = Path.GetExtension(entry.FileServerName);
             if (string.IsNullOrEmpty(ext)) ext = ".jpg";
 
-            string targetPath = Path.Combine(originalsDir, Path.GetFileNameWithoutExtension(safeName) + ext);
+            string target = Path.Combine(dir, $"{entry.FileId}{ext}");
 
-            // se não existe não baixa dnv
-            if (File.Exists(targetPath))
-                return targetPath;
+            if (File.Exists(target))
+                return target;
 
-            // usa a URL original, não a de thumbnail
-            string downloadUrl = entry.Url;
+            lblStatus.InvokeIfRequired(() => lblStatus.Text = $"Baixando original: {entry.FileDecodedName}");
 
-            lblStatus.InvokeIfRequired(() =>
-                lblStatus.Text = $"Baixando original: {entry.Name}"
-            );
+            using var resp = await http.GetAsync(new Uri(entry.OriginalUrl));
+            if (!resp.IsSuccessStatusCode)
+                throw new Exception($"Falha ao baixar imagem original ({resp.StatusCode})");
 
-            using (var resp = await http.GetAsync(downloadUrl))
-            {
-                if (!resp.IsSuccessStatusCode)
-                    throw new HttpRequestException($"Falha ao baixar imagem ({resp.StatusCode})");
+            var bytes = await resp.Content.ReadAsByteArrayAsync();
+            await File.WriteAllBytesAsync(target, bytes);
 
-                var bytes = await resp.Content.ReadAsByteArrayAsync();
-                await File.WriteAllBytesAsync(targetPath, bytes);
-            }
+            lblStatus.InvokeIfRequired(() => lblStatus.Text = $"Catálogo carregado ({Images.Count} imagens)");
 
-            return targetPath;
+            return target;
         }
 
         private async Task<string> DownloadThumbnail(ImageEntry entry)
         {
-            string safe = GetSafeFileNameFromUrl(entry);
-            if (string.IsNullOrWhiteSpace(safe))
-                safe = Guid.NewGuid().ToString("N") + ".jpg";
+            var dir = Path.Combine(cacheDir, "thumbs");
+            Directory.CreateDirectory(dir);
 
-            var thumbsDir = Path.Combine(cacheDir, "thumbs");
-            Directory.CreateDirectory(thumbsDir);
-
-            string thumbPath = Path.Combine(thumbsDir, Path.GetFileNameWithoutExtension(safe) + ".thumb.jpg");
+            string thumbPath = Path.Combine(dir, $"{entry.FileId}_thumb.jpg");
 
             if (File.Exists(thumbPath))
                 return thumbPath;
 
-            // tenta a thumbnail remota (padrão)
-            string downloadUrlThumb = entry.ThumbnailUrl;
-            if (!string.IsNullOrEmpty(downloadUrlThumb))
+            // Se thumbnail remota existe
+            if (!string.IsNullOrEmpty(entry.ThumbnailUrl))
             {
-                // garante que a URL está codificada certa
-                try { downloadUrlThumb = Uri.EscapeUriString(downloadUrlThumb); } catch { }
+                DebugLogger.Log($"Baixando thumbnail remota: {entry.ThumbnailUrl}");
 
-                DebugLogger.Log($"Tentando baixar thumbnail (padrão): {downloadUrlThumb}");
-                try
+                using var resp = await http.GetAsync(new Uri(entry.ThumbnailUrl));
+                if (resp.IsSuccessStatusCode)
                 {
-                    using (var resp = await http.GetAsync(downloadUrlThumb))
-                    {
-                        if (resp.IsSuccessStatusCode)
-                        {
-                            var bytes = await resp.Content.ReadAsByteArrayAsync();
-                            await File.WriteAllBytesAsync(thumbPath, bytes);
-                            DebugLogger.Log($"Thumbnail salva: {thumbPath}");
-                            return thumbPath;
-                        }
-                        else
-                        {
-                            DebugLogger.Log($"Thumbnail remota não encontrada (status {resp.StatusCode}). Tentando variantes...");
-                        }
-                    }
-                }
-                catch (Exception exThumb)
-                {
-                    DebugLogger.Log($"Erro ao baixar thumbnail padrão: {exThumb.Message}. Tentando variantes...");
-                }
-
-                // tenta variantes (_thumb)
-                try
-                {
-                    string fileName = Path.GetFileName(downloadUrlThumb);
-                    string urlVariant = await TryThumbVariantsAsync(downloadUrlThumb, fileName);
-                    if (!string.IsNullOrEmpty(urlVariant))
-                    {
-                        DebugLogger.Log($"Thumbnail variante encontrada: {urlVariant}");
-                        using var resp2 = await http.GetAsync(urlVariant);
-                        if (resp2.IsSuccessStatusCode)
-                        {
-                            var bytes2 = await resp2.Content.ReadAsByteArrayAsync();
-                            await File.WriteAllBytesAsync(thumbPath, bytes2);
-                            DebugLogger.Log($"Thumbnail variante salva: {thumbPath}");
-                            return thumbPath;
-                        }
-                    }
-                    else
-                    {
-                        DebugLogger.Log("Nenhuma variante de thumbnail remota encontrada.");
-                    }
-                }
-                catch (Exception exVariant)
-                {
-                    DebugLogger.Log($"Erro ao testar variantes de thumbnail: {exVariant.Message}");
-                }
-            }
-
-            // fallback: baixar original e gera thumbnail local
-            DebugLogger.Log($"Baixando original para gerar thumbnail local: {entry.Url}");
-            try
-            {
-                using (var resp = await http.GetAsync(entry.Url))
-                {
-                    if (!resp.IsSuccessStatusCode)
-                        throw new HttpRequestException($"Falha ao baixar imagem original ({resp.StatusCode})");
-
                     var bytes = await resp.Content.ReadAsByteArrayAsync();
-                    using (var ms = new MemoryStream(bytes))
-                    using (var src = Image.FromStream(ms))
-                    {
-                        int targetW = 150;
-                        int targetH = 84;
-
-                        using var thumbBmp = new Bitmap(targetW, targetH);
-                        using (var g = Graphics.FromImage(thumbBmp))
-                        {
-                            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-
-                            float srcRatio = (float)src.Width / src.Height;
-                            float targetRatio = (float)targetW / targetH;
-                            Rectangle srcRect;
-                            if (srcRatio > targetRatio)
-                            {
-                                int newWidth = (int)(src.Height * targetRatio);
-                                int x = (src.Width - newWidth) / 2;
-                                srcRect = new Rectangle(x, 0, newWidth, src.Height);
-                            }
-                            else
-                            {
-                                int newHeight = (int)(src.Width / targetRatio);
-                                int y = (src.Height - newHeight) / 2;
-                                srcRect = new Rectangle(0, y, src.Width, newHeight);
-                            }
-
-                            g.DrawImage(src, new Rectangle(0, 0, targetW, targetH), srcRect, GraphicsUnit.Pixel);
-                        }
-
-                        thumbBmp.Save(thumbPath, System.Drawing.Imaging.ImageFormat.Jpeg);
-                    }
+                    await File.WriteAllBytesAsync(thumbPath, bytes);
+                    return thumbPath;
                 }
-            }
-            catch (Exception ex)
-            {
-                DebugLogger.Log($"Falha ao gerar thumbnail local: {ex.Message}");
-                throw;
+
+                DebugLogger.Log("Thumbnail remota não encontrada, gerando local.");
             }
 
-            DebugLogger.Log($"Thumbnail gerada localmente: {thumbPath}");
+            // fallback: gerar thumbnail local
+            var origPath = await DownloadOriginal(entry);
+
+            using var img = Image.FromFile(origPath);
+            int w = 150, h = 84;
+
+            using var bmp = new Bitmap(w, h);
+            using (var g = Graphics.FromImage(bmp))
+            {
+                g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+
+                float srcRatio = (float)img.Width / img.Height;
+                float dstRatio = (float)w / h;
+
+                Rectangle srcRect;
+
+                if (srcRatio > dstRatio)
+                {
+                    int newWidth = (int)(img.Height * dstRatio);
+                    int x = (img.Width - newWidth) / 2;
+                    srcRect = new Rectangle(x, 0, newWidth, img.Height);
+                }
+                else
+                {
+                    int newHeight = (int)(img.Width / dstRatio);
+                    int y = (img.Height - newHeight) / 2;
+                    srcRect = new Rectangle(0, y, img.Width, newHeight);
+                }
+
+                g.DrawImage(img, new Rectangle(0, 0, w, h), srcRect, GraphicsUnit.Pixel);
+            }
+
+            bmp.Save(thumbPath, System.Drawing.Imaging.ImageFormat.Jpeg);
+
             return thumbPath;
         }
-
-
-
 
         private async Task OnThumbnailClicked(ImageEntry entry)
         {
@@ -568,7 +430,7 @@ namespace WallpaperSync
             ToggleControls(false);
             lblStatus.Text = $"Preparando preview: {entry.Name}";
 
-            string path = await DownloadToCache(entry);
+            string path = await DownloadOriginal(entry);
 
             var preview = new PreviewForm(entry.Name, path);
             var res = preview.ShowDialog(this);
@@ -583,8 +445,8 @@ namespace WallpaperSync
                 }
             }
 
-            ToggleControls(true);
             lblStatus.Text = $"Catálogo carregado ({Images.Count} imagens)";
+            ToggleControls(true);
             preview.Dispose();
         }
 
@@ -656,8 +518,6 @@ namespace WallpaperSync
                 return false;
             }
         }
-
-
 
         private bool ApplyViaTranscodedWallpaper(string sourceFile)
         {
@@ -766,17 +626,18 @@ namespace WallpaperSync
             }
         }
 
-
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
             {
                 if (Directory.Exists(cacheDir))
                     Directory.Delete(cacheDir, true);
+
+                DebugLogger.Log("Cache apagado ao fechar o app.");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao limpar cache: {ex.Message}");
+                DebugLogger.Log($"Erro ao limpar cache: {ex.Message}");
             }
         }
 
@@ -812,11 +673,12 @@ namespace WallpaperSync
             if (selected is not ImageEntry img)
                 return;
 
-            string path = await DownloadToCache(img);
+            string path = await DownloadOriginal(img);
             using (var preview = new PreviewForm(img.Name, path))
             {
                 preview.ShowDialog();
             }
+
 
         }
     }
@@ -835,10 +697,14 @@ namespace WallpaperSync
     {
         public string Url { get; set; }
         public string Name { get; set; }
-        public string Tag { get; set; } = "NSFW";
-        public string OriginalExtension { get; set; } = ".jpg";
+        public string FileServerName { get; set; }
+        public string FileDecodedName { get; set; }
+        public string OriginalUrl { get; set; }
+        public string FileId { get; set; }
+        public string Category { get; set; }
         public string ThumbnailUrl { get; set; }
         public string FileName
+
 
         {
             get
@@ -848,6 +714,8 @@ namespace WallpaperSync
                     var p = new Uri(Url).AbsolutePath;
                     var file = Path.GetFileName(Uri.UnescapeDataString(p));
                     return file;
+
+                    
                 }
                 catch
                 {
@@ -857,6 +725,7 @@ namespace WallpaperSync
         }
 
     }
+
 
     public static class WallpaperManager
     {

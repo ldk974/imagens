@@ -46,7 +46,7 @@ namespace WallpaperSync
 
             Controls.Add(txtLog);
             Text = "Debug Log";
-            Width = 600;
+            Width = 800;
             Height = 400;
         }
 
