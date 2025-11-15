@@ -76,10 +76,10 @@ Se você não concorda: **não execute** o programa.
 ## Downloads
 
 ### **GUI - Windows App**
-**[Download V1.0.0 (Gui)](https://release-assets.githubusercontent.com/github-production-release-asset/1081555498/525b72e2-7507-4580-9d63-0744e86e00a9?sp=r&sv=2018-11-09&sr=b&spr=https&se=2025-11-14T19%3A13%3A28Z&rscd=attachment%3B+filename%3DWallpaperSync.exe&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2025-11-14T18%3A12%3A34Z&ske=2025-11-14T19%3A13%3A28Z&sks=b&skv=2018-11-09&sig=lptXLV%2B3rOkEfhw%2FcKbvAmNO07mOyXbBl37XJCWCUuY%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc2MzE0ODE5NCwibmJmIjoxNzYzMTQ0NTk0LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.WmJs39WO30HPhKgRPxvYPbbLy2J4rlTfiLQgGJcFmss&response-content-disposition=attachment%3B%20filename%3DWallpaperSync.exe&response-content-type=application%2Foctet-stream)**
+**[Download V1.0.0 (Gui)](http://github.com/ldk974/wallpapersync/releases/download/gui-v1.0.0/wallpapersync.exe)**
 
 ### **Script PowerShell**
-**[Download V1.0.0 (PowerShell)](https://release-assets.githubusercontent.com/github-production-release-asset/1081555498/96f8c53d-bd84-47b8-9d7f-ececb9a20c3a?sp=r&sv=2018-11-09&sr=b&spr=https&se=2025-11-15T00%3A51%3A46Z&rscd=attachment%3B+filename%3DWallpaperSync.ps1&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2025-11-14T23%3A51%3A17Z&ske=2025-11-15T00%3A51%3A46Z&sks=b&skv=2018-11-09&sig=esMSOoGnG8P5AJpcAGAyHlEfpPwe3%2BURI%2ByTQhhbOzs%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc2MzE2NTY2NiwibmJmIjoxNzYzMTY1MzY2LCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.Rqv_n-GX_0O4_QB1n6_B5rbYio_6HGsumBER-Fa_uFo&response-content-disposition=attachment%3B%20filename%3DWallpaperSync.ps1&response-content-type=application%2Foctet-stream)**
+**[Download V1.0.0 (PowerShell)](http://github.com/ldk974/wallpapersync/releases/download/ps-v1.0.0/wallpapersync.ps1)**
 
 <details open>
 <summary>Como utilizar a versão Script PowerShell</summary>
