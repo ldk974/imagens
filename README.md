@@ -98,7 +98,7 @@ Se você não concorda: **não execute** o programa.
 **P:** WallpaperSync envia dados para fora do meu computador?  
 **R:** Não. Não há telemetria.  As versões GUI e Script PowerShell apenas baixam imagens do servidor.
 
-**P:** O WallpaperSync deixa algum rastro?
+**P:** O WallpaperSync deixa algum rastro?  
 **R:** As imagens são baixadas de forma temporária e removidas após realizar o processo.
 
 **P:** Posso desfazer a alteração?  
